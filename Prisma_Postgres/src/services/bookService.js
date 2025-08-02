@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
-async function AddBook(title, publishedDate, authorId) {
+async function addBook(title, publishedDate, authorId) {
       try {
             const newlyCreatedBook = await prisma.book.create({
                   data: {
@@ -33,20 +33,28 @@ async function getAllBooks() {
 }
 
 async function getBookById(id) {
-      try {
-            const singleBook = await prisma.book.findUnique({
-                  where: { id },
-                  include: { author: true }
-            })
-            if (!singleBook) {
-                  throw new Error(`Book with ${id} not found`)
-            }
-            return singleBook
-      } catch (error) {
-            console.log("Error", error);
+  try {
+    const singleBook = await prisma.book.findUnique({
+      where: {
+        id: Number(id), 
+      },
+      include: {
+        author: true,
+      },
+    });
 
-      }
+    if (!singleBook) {
+      throw new Error(`Book with id ${id} not found`);
+    }
+
+    return singleBook;
+  } catch (error) {
+    console.log("Error in getBookById:", error.message);
+    throw error;
+  }
 }
+
+
 
 async function updateBook(id, newTitle) {
       try {
@@ -74,14 +82,14 @@ async function updateBook(id, newTitle) {
             //using transaction
             const updatedBook = await prisma.$transaction(async (prisma) => {
                   const book = await prisma.book.findUnique({
-                        where: { id },
+                        where: { id: Number(id) },
 
                   })
                   if(!book){
                         throw new Error(`Book with ${id} not found`)
                   }
                   return prisma.book.update({
-                        where : {id},
+                        where : {id : Number(id)},
                         data:{
                               title: newTitle
                         },
@@ -93,15 +101,16 @@ async function updateBook(id, newTitle) {
             throw error
       }
 }
-async function deleteBook(params) {
+async function deleteBook(id){
       try {
            const deletedBook= await prisma.book.delete({
-            where : {id},
+            where : {id: Number(id)},
             include : {author: true}
            }) 
-           return deleteBook
+           return deletedBook
       } catch (error) {
-          throw error  
+          console.log('Error while deleting book:',error);
+           
       }
 }
-module.exports = { AddBook, getAllBooks, getBookById, deleteBook, updateBook }
+module.exports = { addBook, getAllBooks, getBookById, deleteBook, updateBook }

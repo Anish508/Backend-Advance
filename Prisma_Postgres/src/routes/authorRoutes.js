@@ -1,6 +1,6 @@
 // routes/authorRoutes.js
 const express = require('express');
-const { addAuthor } = require('../controllers/authorController');
+const { addAuthor } = require('../controllers/authorController.js');
 
 const router = express.Router();
 
