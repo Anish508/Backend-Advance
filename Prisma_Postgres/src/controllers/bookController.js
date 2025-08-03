@@ -86,3 +86,27 @@ exports.updateBook = async (req, res) => {
             })
       }
 }
+
+
+
+exports.handleGetBooksByAuthorId = async(req, res)=> {
+  const { authorId } = req.params;
+  try {
+    const books = await bookService.getBooksByAuthorId(authorId);
+    res.status(200).json(books);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+const { searchBooksByTitle } = require('../services/bookService');
+
+exports.handleSearchBooksByTitle = async(req, res)=> {
+  const { q } = req.query;
+  try {
+    const results = await bookService.searchBooksByTitle(q);
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}

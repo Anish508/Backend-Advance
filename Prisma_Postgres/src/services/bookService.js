@@ -113,4 +113,37 @@ async function deleteBook(id){
            
       }
 }
-module.exports = { addBook, getAllBooks, getBookById, deleteBook, updateBook }
+
+async function getBooksByAuthorId(authorId) {
+  try {
+    const books = await prisma.book.findMany({
+      where: { authorId: Number(authorId) },
+      include: { author: true }
+    });
+    return books;
+  } catch (error) {
+    console.error("Error fetching books by author ID:", error);
+    throw error;
+  }
+}
+
+async function searchBooksByTitle(query) {
+  try {
+    const books = await prisma.book.findMany({
+      where: {
+        title: {
+          contains: query,
+          mode: 'insensitive',
+        }
+      },
+      include: { author: true }
+    });
+    return books;
+  } catch (error) {
+    console.error("Error searching books:", error);
+    throw error;
+  }
+}
+
+
+module.exports = { addBook, getAllBooks, getBookById, deleteBook, updateBook,getBooksByAuthorId,searchBooksByTitle }
