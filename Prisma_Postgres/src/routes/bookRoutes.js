@@ -9,7 +9,7 @@ router.get('/get-single-book/:id', getBookById)
 router.post('/delete-book/:id', deleteBook)
 router.post('/update-book/:id', updateBook)
 router.get('/get-all-books', getAllBooks)
-router.get('/books-with-author-id', handleGetBooksByAuthorId)
+router.get('/books-with-author-id/:authorId', handleGetBooksByAuthorId)
 router.get('/search', handleSearchBooksByTitle)
 
 module.exports = router

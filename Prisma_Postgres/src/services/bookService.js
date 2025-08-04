@@ -101,18 +101,28 @@ async function updateBook(id, newTitle) {
             throw error
       }
 }
-async function deleteBook(id){
-      try {
-           const deletedBook= await prisma.book.delete({
-            where : {id: Number(id)},
-            include : {author: true}
-           }) 
-           return deletedBook
-      } catch (error) {
-          console.log('Error while deleting book:',error);
-           
-      }
+async function deleteBook(id) {
+  try {
+    const existingBook = await prisma.book.findUnique({
+      where: { id: parseInt(id) }
+    });
+
+    if (!existingBook) {
+      throw new Error(`Book with ID ${id} not found.`);
+    }
+
+    const deletedBook = await prisma.book.delete({
+      where: { id: parseInt(id) },
+      include: {author: true}
+    });
+
+    return deletedBook;
+  } catch (error) {
+    console.error("Error while deleting book:", error);
+    throw error;
+  }
 }
+
 
 async function getBooksByAuthorId(authorId) {
   try {

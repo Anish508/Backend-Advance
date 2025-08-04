@@ -64,7 +64,7 @@ exports.getBookById = async (req, res) => {
 }
 exports.deleteBook = async (req, res)=>{
       try {
-            const deletedBook = await bookService.deleteBook(req.params.id)
+            const deletedBook = await bookService.deleteBook(parseInt(req.params.id))
             res.json({ message: `Deleted book with id ${req.params.id}`,data: deletedBook })
       } catch (error) {
             res.status(499).json({
@@ -99,7 +99,6 @@ exports.handleGetBooksByAuthorId = async(req, res)=> {
   }
 }
 
-const { searchBooksByTitle } = require('../services/bookService');
 
 exports.handleSearchBooksByTitle = async(req, res)=> {
   const { q } = req.query;

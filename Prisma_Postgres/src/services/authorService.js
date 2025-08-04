@@ -16,4 +16,19 @@ async function addAuthor(name) {
 
       }
 }
-module.exports = {addAuthor}
+async function deleteAuthor(id) {
+      const existedAuthor = await prisma.author.findUnique({
+            where : {id: parseInt(id)}
+      })
+
+      if(!existedAuthor){
+             throw new Error(`Author with ID ${id} not found.`);
+      }
+
+      const deletedAuthor = await prisma.author.delete({
+            where : {id : parseInt(id)},
+            include: {books: true}
+      })
+      return deletedAuthor
+}
+module.exports = {addAuthor, deleteAuthor}
