@@ -32,6 +32,31 @@ app.use((req,res,next)=>{
       next()
 })
 
+const httpRequestDuration = new promClient.Histogram({
+    name: "http_request_duration_seconds",
+    help: "Duration of HTTP requests in seconds",
+    labelNames: ["method", "route", "status"],
+    buckets: [0.1, 0.3, 0.5, 1, 1.5, 2, 5] // Customized bucket sizes
+});
+
+register.registerMetric(httpRequestDuration);
+
+app.use((req, res, next) => {
+    const startEpoch = Date.now();
+    
+    res.on('finish', () => {
+        const durationInSeconds = (Date.now() - startEpoch) / 1000;
+        httpRequestDuration.observe({
+            method: req.method,
+            route: req.path,
+            status: res.statusCode
+        }, durationInSeconds);
+    });
+    
+    next();
+});
+
+
 //EXPOSE the /metrics endpoint for prometheus
 
 app.get('/metrics', async (req, res) => {
