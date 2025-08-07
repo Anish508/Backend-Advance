@@ -46,15 +46,15 @@ app.use((req, res, next) => {
     
     res.on('finish', () => {
         const durationInSeconds = (Date.now() - startEpoch) / 1000;
-        httpRequestDuration.observe({
-            method: req.method,
-            route: req.path,
-            status: res.statusCode
-        }, durationInSeconds);
+
+        httpRequestDuration
+            .labels(req.method, req.path, res.statusCode.toString())
+            .observe(durationInSeconds);
     });
-    
+
     next();
 });
+
 
 
 //EXPOSE the /metrics endpoint for prometheus
